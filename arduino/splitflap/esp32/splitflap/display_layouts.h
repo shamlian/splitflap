@@ -73,6 +73,6 @@ static void getLayoutPositionDualRowZigZag(const bool flip_first_rows, const uin
 static void getLayoutPosition(const uint8_t module_index, uint8_t* out_row, uint8_t* out_col) {
     // Select a layout algorithm by uncommenting, or implement your own here:
 
-    // getLayoutPositionDualRowZigZag(true, module_index, out_row, out_col);
-    getLayoutPositionSingleRowZigZag(module_index, out_row, out_col);
+    getLayoutPositionDualRowZigZag(false, module_index, out_row, out_col);
+    // getLayoutPositionSingleRowZigZag(module_index, out_row, out_col);
 }
