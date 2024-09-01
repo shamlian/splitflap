@@ -2,7 +2,7 @@ import random
 import time
 
 from splitflap_proto import (
-    ask_for_serial_port,
+    ask_for_serial_port_if_necessary,
     splitflap_context,
 )
 
@@ -15,7 +15,7 @@ words = [
 
 
 def _run():
-    p = ask_for_serial_port()
+    p = ask_for_serial_port_if_necessary()
     with splitflap_context(p) as s:
         modules = s.get_num_modules()
         alphabet = s.get_alphabet()

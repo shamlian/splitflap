@@ -299,15 +299,26 @@ def splitflap_context(serial_port, default_logging=True, wait_for_comms=True):
             s.shutdown()
 
 
-def ask_for_serial_port():
-    print('Available ports:')
-    ports = sorted(
+def get_serial_port_list():
+    return sorted(
         filter(
             lambda p: p.description != 'n/a',
             serial.tools.list_ports.comports(),
         ),
         key=lambda p: p.device,
     )
+
+def ask_for_serial_port_if_necessary():
+    ports = get_serial_port_list()
+    if len(ports) == 1:
+        print('Using', ports[0].device, ports[0].description)
+        return ports[0].device
+    else:
+        return ask_for_serial_port()
+
+def ask_for_serial_port():
+    print('Available ports:')
+    ports = get_serial_port_list()
     for i, port in enumerate(ports):
         print('[{: 2}] {} - {}'.format(i, port.device, port.description))
     print()
