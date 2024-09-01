@@ -13,6 +13,13 @@ words = [
     'WEASEL', 'WOMBAT',
 ]
 
+def transform(s):
+    # for vertically interleaved chanlink drivers
+    c = 6 # number of columns in the display
+    return "".join(i + j for i, j in zip(s[c:c*2], s[0:c]))
+
+    # for a normal run of chainlink drivers
+    # return s
 
 def _run():
     p = ask_for_serial_port_if_necessary()
@@ -20,10 +27,12 @@ def _run():
         modules = s.get_num_modules()
         alphabet = s.get_alphabet()
 
-        # Show a random word every 10 seconds
+        # Show a random set of words every 10 seconds
         while True:
-            word = random.choice(words)
-            s.set_text(word)
+            string = ''
+            while len(string) < modules:
+                string += random.choice(words)
+            s.set_text(transform(string))
             time.sleep(10)
 
 
