@@ -15,11 +15,18 @@ words = [
 
 def transform(s):
     # for vertically interleaved chanlink drivers
-    c = 6 # number of columns in the display
-    return "".join(i + j for i, j in zip(s[c:c*2], s[0:c]))
+    # c = 6 # number of columns in the display
+    # return "".join(i + j for i, j in zip(s[c:c*2], s[0:c]))
 
     # for a normal run of chainlink drivers
     # return s
+
+    # For my ridiculous arrangement
+    c = 6
+    s = s[::-1]
+    s = ''.join(i + j for i, j in zip(s[c:c*2], s[0:c]))
+    s = s[0:c] + ''.join(j+i for i, j in zip(s[c::2], s[c+1::2]))
+    return s
 
 def _run():
     p = ask_for_serial_port_if_necessary()
