@@ -1,4 +1,7 @@
+import argparse
 import random
+import sys
+import textwrap
 import time
 
 from splitflap_proto import (
@@ -29,18 +32,50 @@ def transform(s):
     return s
 
 def _run():
+    parser = argparse.ArgumentParser(prog='Demo',
+                                     description='Splitflap Demo')
+    parser.add_argument('-i', '--infile', nargs='?',
+                        type=argparse.FileType('r'),
+                        const=sys.stdin, default=None,
+                        help='Input file to display on splitflap')
+    parser.add_argument('-c', '--console', action='store_true',
+                        help='Console-interactive mode')
+    parser.add_argument('-l', '--loop', action='store_true',
+                        help='Flag to loop infinitely (default false)')
+    parser.add_argument('-d', '--delay', type=float, default=5.0,
+                        help='Delay between display updates in seconds')
+    args = parser.parse_args()
+    print(args)
+
     p = ask_for_serial_port_if_necessary()
     with splitflap_context(p) as s:
         modules = s.get_num_modules()
         alphabet = s.get_alphabet()
 
-        # Show a random set of words every 10 seconds
         while True:
-            string = ''
-            while len(string) < modules:
-                string += random.choice(words)
-            s.set_text(transform(string))
-            time.sleep(10)
+            if args.infile == None:
+                if args.console:
+                    string = input('> ')[:12].ljust(12)
+                else:
+                    string = ''
+                    while len(string) < modules:
+                        string += random.choice(words)
+                s.set_text(transform(string))
+                time.sleep(args.delay)
+            else:
+                strings = textwrap.wrap(args.infile.read(), width=6)
+
+                if len(strings) % 2 == 1:
+                    strings.append('')
+
+                it = iter(strings)
+
+                for out in [f"{x:6}{y:6}" for x, y in zip(it, it)]:
+                    s.set_text(transform(out).upper())
+                    time.sleep(args.delay)
+
+            if not args.loop:
+                break
 
 
 if __name__ == '__main__':
