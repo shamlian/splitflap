@@ -74,6 +74,9 @@ def _run():
                     s.set_text(transform(out).upper())
                     time.sleep(args.delay)
 
+                if args.infile != sys.stdin:
+                    args.infile.seek(0)
+
             if not args.loop:
                 break
 
